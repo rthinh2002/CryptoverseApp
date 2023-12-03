@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Select, Typography, Row, Col, Card } from 'antd';
 import moment from 'moment';
 
@@ -14,10 +14,11 @@ const demoImage = 'http://coinrevolution.com/wp-content/uploads/2020/06/cryptone
 
 const News = ({simplified}) => {
   const [newsCategory, setNewsCategory] = useState('Cryptocurrency'); 
-  const { data: cryptoNews } = useGetCryptoNewsQuery({ newsCategory , count: simplified ? 6 : 12 });
+  const { data: cryptoNews } = useGetCryptoNewsQuery({ newsCategory });
   const { data } = useGetCryptosQuery(100);
+  const [count] = useState(simplified ? 6 : 12 );
 
-  if(!cryptoNews?.articles) return <Loader />;
+  if(!cryptoNews?.data) return <Loader />;
 
   return (
     <Row gutter={[24, 24]}>
@@ -35,22 +36,16 @@ const News = ({simplified}) => {
           </Select>
         </Col>  
       )}
-      {cryptoNews?.articles.map((news, i) => (
+      {cryptoNews?.data.slice(0, count).map((news, i) => (
         <Col xs={24} sm={12} lg={8} key={i}>
           <Card hoverable className='news-card'>
-            <a href={news.url} target='_blank' rel="noreferrer">
+            <a href={news.link} target='_blank' rel="noreferrer">
               <div className='news-image-container'>
-                <img src={news?.urlToImage || demoImage} alt='news' />
+                <img src={news?.photo_url || demoImage} alt='news' />
               </div>
               <Title className='news-title' level={4}>{news.title}</Title>
-              <p className='news-description'>
-                {news.description.length > 200 ? `${news.description.substring(0, 200)}...` : news.description}
-              </p>
               <div className='provider-container'>
-                <div>
-                  <Text className='provider-name'>{news.author}</Text>
-                </div>
-                <Text>{moment(news.publishedAt).startOf('ss').fromNow()}</Text>
+                <Text>{moment(news.published_datetime_utc).startOf('ss').fromNow()}</Text>
               </div>
             </a>
           </Card>

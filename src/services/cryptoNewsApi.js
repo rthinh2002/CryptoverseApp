@@ -1,15 +1,20 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const baseUrl = 'https://newsapi.org/v2';
+const cryptoApiHeaders = {
+    'X-RapidAPI-Key': process.env.REACT_APP_X_RAPIDAPI_KEY_NEWS,
+    'X-RapidAPI-Host': process.env.REACT_APP_X_RAPIDAPI_HOST_NEWS
+};
 
-const createRequest = (url) => ({ url });
+const baseUrl = 'https://real-time-news-data.p.rapidapi.com';
+
+const createRequest = (url) => ({ url, headers: cryptoApiHeaders });
 
 export const cryptoNewsApi = createApi({
     reducerPath: 'cryptoNewsApi',
     baseQuery: fetchBaseQuery({ baseUrl }),
     endpoints: (builder) => ({
         getCryptoNews: builder.query({
-            query: ({newsCategory, count}) => createRequest(`/everything?q=${newsCategory}&sortBy=popularity&pageSize=${count}&apiKey=${process.env.REACT_APP_NEWSAPI_KEY}`)
+            query: ({newsCategory}) => createRequest(`/search?query=${newsCategory}`)
         })
     })
 });
